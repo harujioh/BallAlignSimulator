@@ -29,9 +29,9 @@ $(document).ready(function () {
             y1: y1,
             x2: x2,
             y2: y2,
-            stroke: $('#line-color').val(),
-            strokeOpacity: $('#line-color').minicolors('opacity'),
-            strokeWidth: $('#line-width').val(),
+            stroke: $('#line-color').val() || '#000000',
+            strokeOpacity: parseFloat($('#line-color').minicolors('opacity')) || 1,
+            strokeWidth: parseFloat($('#line-width').val()) || 1,
         });
     }
 
@@ -39,9 +39,9 @@ $(document).ready(function () {
         return create('polyline', {
             points: points.map(p => p.join(',')).join(' '),
             fill: 'none',
-            stroke: $('#line-color').val(),
-            strokeOpacity: $('#line-color').minicolors('opacity'),
-            strokeWidth: $('#line-width').val(),
+            stroke: $('#line-color').val() || '#000000',
+            strokeOpacity: parseFloat($('#line-color').minicolors('opacity')) || 1,
+            strokeWidth: parseFloat($('#line-width').val()) || 1,
         });
     }
 
@@ -49,15 +49,15 @@ $(document).ready(function () {
         return create('path', {
             d: points.flatMap((p, i) => [i == 0 ? 'M' : 'L', p[0], p[1]]).join(' ') + ' z',
             fill: 'none',
-            stroke: $('#line-color').val(),
-            strokeOpacity: $('#line-color').minicolors('opacity'),
-            strokeWidth: $('#line-width').val(),
+            stroke: $('#line-color').val() || '#000000',
+            strokeOpacity: parseFloat($('#line-color').minicolors('opacity')) || 1,
+            strokeWidth: parseFloat($('#line-width').val()) || 1,
         });
     }
 
     function draw() {
-        var width = $('#width').val();
-        var height = $('#height').val();
+        var width = parseInt($('#width').val()) || 1000;
+        var height = parseInt($('#height').val()) || 1000;
 
         svg.setAttribute('viewBox', [0, 0, width, height].join(' '));
         $svg.attr({
@@ -71,12 +71,12 @@ $(document).ready(function () {
         var assistPointGroup = createGroup('中心線').appendTo(lineGroup);
         var pointGroup = createGroup('ポイント').appendTo(svg);
 
-        var polySide = parseInt($('#poly-side').val());
-        var polyNum = parseInt($('#poly-num').val());
-        var startLength = parseFloat($('#length-initial').val());
-        var lengthRate = parseFloat($('#length-rate').val());
-        var lengthEquidistantNum = parseInt($('#length-equidistant-num').val());
-        var thresholdAngle = parseFloat($('#angle-threshold').val());
+        var polySide = parseInt($('#poly-side').val()) || 6;
+        var polyNum = parseInt($('#poly-num').val()) || 8;
+        var startLength = parseFloat($('#length-initial').val()) || 30;
+        var lengthRate = parseFloat($('#length-rate').val()) || 1.2;
+        var lengthEquidistantNum = parseInt($('#length-equidistant-num').val()) || 1;
+        var thresholdAngle = parseFloat($('#angle-threshold').val()) || 10;
 
         function getR(hexagonIndex) {
             if (lengthRate == 1 || hexagonIndex <= lengthEquidistantNum) {
@@ -96,18 +96,18 @@ $(document).ready(function () {
                 cx: x,
                 cy: y,
                 stroke: 'none',
-                fill: $('#line-color').val(),
-                fillOpacity: $('#line-color').minicolors('opacity'),
-                r: $('#line-width').val() * 2,
+                fill: $('#line-color').val() || '#FF0000',
+                fillOpacity: parseFloat($('#line-color').minicolors('opacity')) || 1,
+                r: (parseFloat($('#line-width').val()) || 1) * 2,
             }).appendTo(assistPointGroup);
 
             create('circle', {
                 cx: x,
                 cy: y,
                 stroke: 'none',
-                fill: $('#ball-color').val(),
-                fillOpacity: $('#ball-color').minicolors('opacity'),
-                r: $('#ball-size').val(),
+                fill: $('#ball-color').val() || '#FF0000',
+                fillOpacity: parseFloat($('#ball-color').minicolors('opacity')) || 1,
+                r: parseFloat($('#ball-size').val()) || 20,
             }).appendTo(pointGroup);
         }
 
