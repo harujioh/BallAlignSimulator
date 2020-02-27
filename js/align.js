@@ -173,4 +173,8 @@ $(document).ready(function () {
             opacity: $(this).data('opacity')
         });
     });
+
+    $('#form form input').tooltip({
+        placement: 'bottom'
+    });
 });
