@@ -75,10 +75,14 @@ $(document).ready(function () {
         var polyNum = parseInt($('#poly-num').val());
         var startLength = parseFloat($('#length-initial').val());
         var lengthRate = parseFloat($('#length-rate').val());
+        var lengthEquidistantNum = parseInt($('#length-equidistant-num').val());
         var thresholdAngle = parseFloat($('#angle-threshold').val());
 
         function getR(hexagonIndex) {
-            return lengthRate == 1 ? startLength * hexagonIndex : startLength * (1 - Math.pow(lengthRate, hexagonIndex)) / (1 - lengthRate);
+            if (lengthRate == 1 || hexagonIndex <= lengthEquidistantNum) {
+                return startLength * hexagonIndex;
+            }
+            return startLength * (1 - Math.pow(lengthRate, hexagonIndex - lengthEquidistantNum + 1)) / (1 - lengthRate) + startLength * (lengthEquidistantNum - 1);
         }
 
         function splitPoint(startPoint, endPoint, num) {
@@ -112,7 +116,7 @@ $(document).ready(function () {
             var cx = width / 2, cy = height / 2;
 
             // Poly
-            for (var i = 1; i < polyNum; i++) {
+            for (var i = 1; i < polyNum + 1; i++) {
                 var r = getR(i);
 
                 createPath(Array.from(Array(polySide)).map((v, j) => {
@@ -121,13 +125,13 @@ $(document).ready(function () {
             }
 
             // Center Line
-            var r = getR(polyNum - 1) * 1.1;
+            var r = getR(polyNum) * 1.1;
             for (var j = 0; j < polySide; j++) {
                 createLine(cx, cy, cx + r * Math.cos(j / polySide * 2 * Math.PI), cy + r * Math.sin(j / polySide * 2 * Math.PI)).appendTo(centerLineGroup);
             }
 
             // Point
-            for (var i = 0; i < polyNum; i++) {
+            for (var i = 0; i < polyNum + 1; i++) {
                 if (i == 0) {
                     appendPoint(cx, cy);
                 } else {

@@ -49,18 +49,19 @@
 
             <div class="form-group input-group">
                 <div class="input-group-prepend">
-                    <span class="input-group-text">length</span>
-                </div>
-                <input type="number" id="length-initial" class="form-control" value="30" step="1" placeholder="initial" title="中心から最初の六角形のボールの距離[px]">
-                <input type="number" id="length-rate" class="form-control" value="1.2" step="0.01" placeholder="rate" title="次の六角形までの距離が大きくなる割合">
-            </div>
-
-            <div class="form-group input-group">
-                <div class="input-group-prepend">
                     <span class="input-group-text">poly</span>
                 </div>
                 <input type="number" id="poly-side" class="form-control" value="6" step="1" min="3" max="20" placeholder="side" title="多角形の辺の数">
                 <input type="number" id="poly-num" class="form-control" value="8" step="1" min="1" max="20" placeholder="num" title="多角形の数">
+            </div>
+
+            <div class="form-group input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">length</span>
+                </div>
+                <input type="number" id="length-initial" class="form-control" value="30" step="1" placeholder="initial" title="中心から最初の六角形のボールの距離[px]">
+                <input type="number" id="length-rate" class="form-control" value="1.2" step="0.01" placeholder="rate" title="次の六角形までの距離が大きくなる割合">
+                <input type="number" id="length-equidistant-num" class="form-control" value="1" step="1" min="1" max="20" placeholder="num" title="多角形がこの数までは、距離が大きくならない">
             </div>
 
             <div class="form-group input-group">
