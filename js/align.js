@@ -1,18 +1,30 @@
+Element.prototype.appendTo = function (parent) {
+    if (parent instanceof Element) {
+        parent.appendChild(this);
+    }
+    return this;
+};
+
 $(document).ready(function () {
     var $svg = $('svg#main');
     var svg = $('svg#main')[0];
 
-    function append(tagName, attributes) {
+    function create(tagName, attributes) {
         var object = document.createElementNS('http://www.w3.org/2000/svg', tagName);
         for (var keys = Object.keys(attributes), i = 0, l = keys.length; i < l; i++) {
             object.setAttribute(keys[i].replace(/([A-Z])/g, s => '-' + s.charAt(0).toLowerCase()), attributes[keys[i]]);
         }
-        svg.appendChild(object);
         return object;
     }
 
-    function appendLine(x1, y1, x2, y2) {
-        return append('line', {
+    function createGroup(name) {
+        return create('g', {
+            id: name
+        });
+    }
+
+    function createLine(x1, y1, x2, y2) {
+        return create('line', {
             x1: x1,
             y1: y1,
             x2: x2,
@@ -23,8 +35,8 @@ $(document).ready(function () {
         });
     }
 
-    function appendPolyline(points) {
-        return append('polyline', {
+    function createPolyline(points) {
+        return create('polyline', {
             points: points.map(p => p.join(',')).join(' '),
             fill: 'none',
             stroke: $('#line-color').val(),
@@ -33,24 +45,13 @@ $(document).ready(function () {
         });
     }
 
-    function appendPath(points) {
-        return append('path', {
+    function createPath(points) {
+        return create('path', {
             d: points.flatMap((p, i) => [i == 0 ? 'M' : 'L', p[0], p[1]]).join(' ') + ' z',
             fill: 'none',
             stroke: $('#line-color').val(),
             strokeOpacity: $('#line-color').minicolors('opacity'),
             strokeWidth: $('#line-width').val(),
-        });
-    }
-
-    function appendCircle(x, y) {
-        return append('circle', {
-            cx: x,
-            cy: y,
-            stroke: 'none',
-            fill: $('#ball-color').val(),
-            fillOpacity: $('#ball-color').minicolors('opacity'),
-            r: $('#ball-size').val(),
         });
     }
 
@@ -64,6 +65,11 @@ $(document).ready(function () {
             height: height,
         }).empty();
 
+        var lineGroup = createGroup('線').appendTo(svg);
+        var centerLineGroup = createGroup('中心線').appendTo(lineGroup);
+        var polygonLineGroup = createGroup('多角形線').appendTo(lineGroup);
+        var assistPointGroup = createGroup('中心線').appendTo(lineGroup);
+        var pointGroup = createGroup('ポイント').appendTo(svg);
 
         var polySide = parseInt($('#poly-side').val());
         var polyNum = parseInt($('#poly-num').val());
@@ -81,6 +87,26 @@ $(document).ready(function () {
             });
         }
 
+        function appendPoint(x, y) {
+            create('circle', {
+                cx: x,
+                cy: y,
+                stroke: 'none',
+                fill: $('#line-color').val(),
+                fillOpacity: $('#line-color').minicolors('opacity'),
+                r: $('#line-width').val() * 2,
+            }).appendTo(assistPointGroup);
+
+            create('circle', {
+                cx: x,
+                cy: y,
+                stroke: 'none',
+                fill: $('#ball-color').val(),
+                fillOpacity: $('#ball-color').minicolors('opacity'),
+                r: $('#ball-size').val(),
+            }).appendTo(pointGroup);
+        }
+
         // Main draw
         (function () {
             var cx = width / 2, cy = height / 2;
@@ -89,21 +115,21 @@ $(document).ready(function () {
             for (var i = 1; i < polyNum; i++) {
                 var r = getR(i);
 
-                appendPath(Array.from(Array(polySide)).map((v, j) => {
+                createPath(Array.from(Array(polySide)).map((v, j) => {
                     return [cx + r * Math.cos(j / polySide * 2 * Math.PI), cy + r * Math.sin(j / polySide * 2 * Math.PI)];
-                }));
+                })).appendTo(polygonLineGroup);
             }
 
             // Center Line
             var r = getR(polyNum - 1) * 1.1;
             for (var j = 0; j < polySide; j++) {
-                appendLine(cx, cy, cx + r * Math.cos(j / polySide * 2 * Math.PI), cy + r * Math.sin(j / polySide * 2 * Math.PI));
+                createLine(cx, cy, cx + r * Math.cos(j / polySide * 2 * Math.PI), cy + r * Math.sin(j / polySide * 2 * Math.PI)).appendTo(centerLineGroup);
             }
 
             // Point
             for (var i = 0; i < polyNum; i++) {
                 if (i == 0) {
-                    appendCircle(cx, cy);
+                    appendPoint(cx, cy);
                 } else {
                     var n = i - 1;
                     (function () {
@@ -132,10 +158,10 @@ $(document).ready(function () {
                         var startPoint = [cx + r * Math.cos(j / polySide * 2 * Math.PI), cy + r * Math.sin(j / polySide * 2 * Math.PI)];
                         var endPoint = [cx + r * Math.cos((j + 1) / polySide * 2 * Math.PI), cy + r * Math.sin((j + 1) / polySide * 2 * Math.PI)];
 
-                        appendCircle(startPoint[0], startPoint[1]);
+                        appendPoint(startPoint[0], startPoint[1]);
                         if (n > 0) {
                             var points = splitPoint(startPoint, endPoint, n + 1);
-                            points.filter((v, k) => k > 0).forEach(p => appendCircle(p[0], p[1]));
+                            points.filter((v, k) => k > 0).forEach(p => appendPoint(p[0], p[1]));
                         }
                     }
                 }
