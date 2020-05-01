@@ -56,8 +56,18 @@ $(document).ready(function () {
     }
 
     function draw() {
-        var width = parseInt($('#width').val()) || 1000;
-        var height = parseInt($('#height').val()) || 1000;
+        var mmPerPx = parseFloat($('#mm-per-px').val()) || 20;
+        var ballRadius = ((parseFloat($('#ball-size').val()) / 2) || 500) / mmPerPx;
+        var polySide = parseInt($('#poly-side').val()) || 6;
+        var polyNum = parseInt($('#poly-num').val()) || 8;
+        var startLength = (parseFloat($('#length-initial').val()) || 30) / mmPerPx;
+        var lengthRate = parseFloat($('#length-rate').val()) || 1.2;
+        var lengthEquidistantNum = parseInt($('#length-equidistant-num').val()) || 1;
+        var thresholdAngle = parseFloat($('#angle-threshold').val()) || 10;
+
+        var centerLineRadius = getR(polyNum) * 1.1;
+        var width = Math.ceil(centerLineRadius * 2);
+        var height = Math.ceil(centerLineRadius * 2);
 
         svg.setAttribute('viewBox', [0, 0, width, height].join(' '));
         $svg.attr({
@@ -70,13 +80,6 @@ $(document).ready(function () {
         var polygonLineGroup = createGroup('多角形線').appendTo(lineGroup);
         var assistPointGroup = createGroup('中心線').appendTo(lineGroup);
         var pointGroup = createGroup('ポイント').appendTo(svg);
-
-        var polySide = parseInt($('#poly-side').val()) || 6;
-        var polyNum = parseInt($('#poly-num').val()) || 8;
-        var startLength = parseFloat($('#length-initial').val()) || 30;
-        var lengthRate = parseFloat($('#length-rate').val()) || 1.2;
-        var lengthEquidistantNum = parseInt($('#length-equidistant-num').val()) || 1;
-        var thresholdAngle = parseFloat($('#angle-threshold').val()) || 10;
 
         function getR(hexagonIndex) {
             if (lengthRate == 1 || hexagonIndex <= lengthEquidistantNum) {
@@ -91,7 +94,7 @@ $(document).ready(function () {
             });
         }
 
-        function appendPoint(x, y) {
+        function appendPoint(x, y, radius) {
             create('circle', {
                 cx: x,
                 cy: y,
@@ -107,7 +110,7 @@ $(document).ready(function () {
                 stroke: 'none',
                 fill: $('#ball-color').val() || '#FF0000',
                 fillOpacity: parseFloat($('#ball-color').minicolors('opacity')) || 1,
-                r: parseFloat($('#ball-size').val()) || 20,
+                r: radius,
             }).appendTo(pointGroup);
         }
 
@@ -127,13 +130,13 @@ $(document).ready(function () {
             // Center Line
             var r = getR(polyNum) * 1.1;
             for (var j = 0; j < polySide; j++) {
-                createLine(cx, cy, cx + r * Math.cos(j / polySide * 2 * Math.PI), cy + r * Math.sin(j / polySide * 2 * Math.PI)).appendTo(centerLineGroup);
+                createLine(cx, cy, cx + centerLineRadius * Math.cos(j / polySide * 2 * Math.PI), cy + centerLineRadius * Math.sin(j / polySide * 2 * Math.PI)).appendTo(centerLineGroup);
             }
 
             // Point
             for (var i = 0; i < polyNum + 1; i++) {
                 if (i == 0) {
-                    appendPoint(cx, cy);
+                    appendPoint(cx, cy, ballRadius);
                 } else {
                     var n = i - 1;
                     (function () {
@@ -162,10 +165,10 @@ $(document).ready(function () {
                         var startPoint = [cx + r * Math.cos(j / polySide * 2 * Math.PI), cy + r * Math.sin(j / polySide * 2 * Math.PI)];
                         var endPoint = [cx + r * Math.cos((j + 1) / polySide * 2 * Math.PI), cy + r * Math.sin((j + 1) / polySide * 2 * Math.PI)];
 
-                        appendPoint(startPoint[0], startPoint[1]);
+                        appendPoint(startPoint[0], startPoint[1], ballRadius);
                         if (n > 0) {
                             var points = splitPoint(startPoint, endPoint, n + 1);
-                            points.filter((v, k) => k > 0).forEach(p => appendPoint(p[0], p[1]));
+                            points.filter((v, k) => k > 0).forEach(p => appendPoint(p[0], p[1], ballRadius));
                         }
                     }
                 }
@@ -182,7 +185,7 @@ $(document).ready(function () {
     var keyDownTimeout = -1
     $('#form form input').keydown(function () {
         clearTimeout(keyDownTimeout);
-        keyDownTimeout = setTimeout(() => draw(), 10);
+        keyDownTimeout = setTimeout(() => draw(), 100);
     });
 
     $('.colorpicker').change(function () {
@@ -202,6 +205,13 @@ $(document).ready(function () {
             theme: 'bootstrap',
             opacity: $(this).data('opacity')
         });
+    });
+
+    $('.input-slider').inputSliderRange({
+        delay: 50,
+        onChanged: function (e) {
+            draw()
+        }
     });
 
     $('#form form input').tooltip({
