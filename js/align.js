@@ -55,9 +55,17 @@ $(document).ready(function () {
         });
     }
 
+    var $form = $('#form');
     function draw() {
-        if(!$('form').is(':valid')){
+        var validation = $('form').is(':valid');
+        if (!validation) {
+            if (!$form.hasClass('invalid')) {
+                $form.addClass('invalid');
+            }
+            $svg.empty();
             return;
+        } else if ($form.hasClass('invalid')) {
+            $form.removeClass('invalid');
         }
 
         var mmPerPx = parseFloat($('#mm-per-px').val()) || 20;
