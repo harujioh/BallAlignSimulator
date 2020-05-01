@@ -56,6 +56,10 @@ $(document).ready(function () {
     }
 
     function draw() {
+        if(!$('form').is(':valid')){
+            return;
+        }
+
         var mmPerPx = parseFloat($('#mm-per-px').val()) || 20;
         var ballRadius = ((parseFloat($('#ball-size').val()) / 2) || 500) / mmPerPx;
         var polySide = parseInt($('#poly-side').val()) || 6;
