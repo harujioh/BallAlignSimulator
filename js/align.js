@@ -78,7 +78,7 @@ $(document).ready(function () {
         var lineGroup = createGroup('線').appendTo(svg);
         var centerLineGroup = createGroup('中心線').appendTo(lineGroup);
         var polygonLineGroup = createGroup('多角形線').appendTo(lineGroup);
-        var assistPointGroup = createGroup('中心線').appendTo(lineGroup);
+        var assistPointGroup = createGroup('アシストポイント').appendTo(lineGroup);
         var pointGroup = createGroup('ポイント').appendTo(svg);
 
         function getR(hexagonIndex) {
@@ -94,23 +94,20 @@ $(document).ready(function () {
             });
         }
 
-        function appendPoint(x, y, radius) {
-            create('circle', {
-                cx: x,
-                cy: y,
-                stroke: 'none',
-                fill: $('#line-color').val() || '#FF0000',
-                fillOpacity: parseFloat($('#line-color').minicolors('opacity')) || 1,
-                r: (parseFloat($('#line-width').val()) || 1) * 2,
+        function appendPathPoint(x, y) {
+            create('path', {
+                d: 'M' + x + ',' + y,
             }).appendTo(assistPointGroup);
+        }
 
+        function appendPoint(x, y) {
             create('circle', {
                 cx: x,
                 cy: y,
                 stroke: 'none',
                 fill: $('#ball-color').val() || '#FF0000',
                 fillOpacity: parseFloat($('#ball-color').minicolors('opacity')) || 1,
-                r: radius,
+                r: ballRadius,
             }).appendTo(pointGroup);
         }
 
@@ -136,7 +133,7 @@ $(document).ready(function () {
             // Point
             for (var i = 0; i < polyNum + 1; i++) {
                 if (i == 0) {
-                    appendPoint(cx, cy, ballRadius);
+                    appendPoint(cx, cy);
                 } else {
                     var n = i - 1;
                     (function () {
@@ -165,10 +162,13 @@ $(document).ready(function () {
                         var startPoint = [cx + r * Math.cos(j / polySide * 2 * Math.PI), cy + r * Math.sin(j / polySide * 2 * Math.PI)];
                         var endPoint = [cx + r * Math.cos((j + 1) / polySide * 2 * Math.PI), cy + r * Math.sin((j + 1) / polySide * 2 * Math.PI)];
 
-                        appendPoint(startPoint[0], startPoint[1], ballRadius);
+                        appendPoint(startPoint[0], startPoint[1]);
                         if (n > 0) {
                             var points = splitPoint(startPoint, endPoint, n + 1);
-                            points.filter((v, k) => k > 0).forEach(p => appendPoint(p[0], p[1], ballRadius));
+                            points.filter((v, k) => k > 0).forEach(p => {
+                                appendPoint(p[0], p[1]);
+                                appendPathPoint(p[0], p[1]);
+                            });
                         }
                     }
                 }
