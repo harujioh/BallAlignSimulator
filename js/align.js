@@ -211,6 +211,31 @@ $(document).ready(function () {
         return false;
     });
 
+    $('#export').click(function () {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(JSON.stringify($.makeArray($('input')).reduce((a, v) => {
+                a[$(v).attr('id')] = $(v).val();
+                return a;
+            }, {})));
+        }
+        return false;
+    });
+
+    $('#import').click(function () {
+        if (navigator.clipboard) {
+            navigator.clipboard.readText().then(text => {
+                var obj = JSON.parse(text);
+                $('input').each(function () {
+                    var key = $(this).attr('id');
+                    if (key in obj) {
+                        $(this).val(obj[key]);
+                    }
+                });
+            })
+        }
+        return false;
+    });
+
     $('.colorpicker').each(function () {
         $(this).minicolors({
             format: $(this).attr('data-format') || 'hex',
@@ -226,7 +251,8 @@ $(document).ready(function () {
         }
     });
 
-    $('#form form input').tooltip({
-        placement: 'bottom'
+    $('#form [title]').tooltip({
+        placement: 'bottom',
+        html: true
     });
 });
