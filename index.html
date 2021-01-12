@@ -26,63 +26,64 @@
 
     <div id="form">
         <form>
-            <div class="form-group input-group">
+            <div class="form-group input-group" title="イラレ上で1pxあたりの長さ[mm]&lt;br/&gt;1mのパスが50pxだった場合は、1000/50で20を入力する">
                 <div class="input-group-prepend">
                     <span class="input-group-text">mm/px</span>
                 </div>
                 <input type="number" id="mm-per-px" class="form-control" value="20" step="0.001" data-round-size="3"
-                    min="1" max="10000" required placeholder="mm/px" data-html="true"
-                    title="イラレ上で1pxあたりの長さ[mm]<br/>1mのパスが50pxだった場合は、1000/50で20を入力する">
+                    min="1" max="10000" required placeholder="mm/px">
             </div>
 
-            <div class="form-group input-group">
+            <div class="form-group input-group" title="線の太さ[px]&lt;br&gt;線の色">
                 <div class="input-group-prepend">
                     <span class="input-group-text">line</span>
                 </div>
                 <input type="number" id="line-width" class="form-control input-slider" value="0.5" step="0.001" min="0"
-                    max="10" data-round-size="3" required placeholder="width" title="線の太さ[px]">
+                    max="10" data-round-size="3" required placeholder="width">
                 <input type="text" id="line-color" class="form-control colorpicker" data-control="hue" value="#000000"
-                    data-opacity="1" size="7" required placeholder="color" title="線の色">
+                    data-opacity="1" size="7" required placeholder="color">
             </div>
 
-            <div class="form-group input-group">
+            <div class="form-group input-group" title="ボールの直径サイズ[mm]&lt;br&gt;ボールの色">
                 <div class="input-group-prepend">
                     <span class="input-group-text">ball</span>
                 </div>
                 <input type="number" id="ball-size" class="form-control input-slider" value="600" step="1" min="10"
-                    max="1500" data-round-size="1" required placeholder="size" title="ボールの直径サイズ[mm]">
+                    max="1500" data-round-size="1" required placeholder="size">
                 <input type="text" id="ball-color" class="form-control colorpicker" data-control="hue" value="#FF0000"
-                    data-opacity="1" size="7" required placeholder="color" title="ボールの色">
+                    data-opacity="1" size="7" required placeholder="color">
             </div>
 
-            <div class="form-group input-group">
+            <div class="form-group input-group" title="多角形の辺の数&lt;br&gt;多角形の数">
                 <div class="input-group-prepend">
                     <span class="input-group-text">poly</span>
                 </div>
                 <input type="number" id="poly-side" class="form-control input-slider" value="6" step="1" min="3"
-                    max="20" required placeholder="side" title="多角形の辺の数">
+                    max="20" required placeholder="side">
                 <input type="number" id="poly-num" class="form-control input-slider" value="8" step="1" min="1" max="20"
-                    required placeholder="num" title="多角形の数">
+                    required placeholder="num">
             </div>
 
-            <div class="form-group input-group">
+            <div class="form-group input-group"
+                title="中心から最初の六角形のボールの距離[mm]&lt;br&gt;次の六角形までの距離が大きくなる割合&lt;br&gt;多角形がこの数までは、距離が大きくならない">
                 <div class="input-group-prepend">
                     <span class="input-group-text">length</span>
                 </div>
                 <input type="number" id="length-initial" class="form-control input-slider" value="2500" step="1"
-                    min="500" max="10000" required placeholder="initial" title="中心から最初の六角形のボールの距離[mm]">
+                    min="500" max="10000" required placeholder="initial">
                 <input type="number" id="length-rate" class="form-control input-slider" value="1.2" step="0.01"
-                    min="0.01" max="5" data-round-size="2" required placeholder="rate" title="次の六角形までの距離が大きくなる割合">
+                    min="0.01" max="5" data-round-size="2" required placeholder="rate">
                 <input type="number" id="length-equidistant-num" class="form-control input-slider" value="1" step="1"
-                    min="1" max="20" required placeholder="num" title="多角形がこの数までは、距離が大きくならない">
+                    min="1" max="20" required placeholder="num">
             </div>
 
-            <div class="form-group input-group">
+            <div class="form-group input-group"
+                title="許容する角度のしきい値[度]&lt;br&gt;&lt;img src=&quot;./img/description_angle.png&quot; width=&quot;300&quot;&gt;">
                 <div class="input-group-prepend">
                     <span class="input-group-text">angle</span>
                 </div>
                 <input type="number" id="angle-threshold" class="form-control input-slider" value="10" step="1" min="10"
-                    max="120" required placeholder="threshold" title="許容する角度のしきい値[度]">
+                    max="120" required placeholder="threshold">
             </div>
 
             <p style="text-align:center;">
