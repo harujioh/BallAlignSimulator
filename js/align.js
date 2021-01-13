@@ -55,6 +55,13 @@ $(document).ready(function () {
         });
     }
 
+    function getParameter() {
+        return $.makeArray($('input')).reduce((a, v) => {
+            a[$(v).attr('id')] = $(v).val();
+            return a;
+        }, {});
+    }
+
     var $form = $('#form');
     function draw() {
         var validation = $('form').is(':valid');
@@ -68,6 +75,10 @@ $(document).ready(function () {
             $form.removeClass('invalid');
         }
 
+        if (JSON.stringify($form.data('parameter')) === JSON.stringify(getParameter())) {
+            return;
+        }
+        $form.data('parameter', getParameter());
         var mmPerPx = parseFloat($('#mm-per-px').val()) || 20;
         var ballRadius = ((parseFloat($('#ball-size').val()) / 2) || 500) / mmPerPx;
         var polySide = parseInt($('#poly-side').val()) || 6;
@@ -211,6 +222,48 @@ $(document).ready(function () {
         return false;
     });
 
+    $('#export').click(function () {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(JSON.stringify(getParameter()));
+        }
+        alert('クリップボードにコピーしました。');
+        return false;
+    });
+
+    $('#import').click(function () {
+        if (navigator.clipboard) {
+            navigator.clipboard.readText().then(text => {
+                var obj;
+                try {
+                    obj = JSON.parse(text);
+                } catch (e) {
+                    obj = {};
+                }
+                var successCount = 0;
+                $('input').each(function () {
+                    var key = $(this).attr('id');
+                    if (key in obj) {
+                        successCount++;
+                        if ($(this).is('.input-slider')) {
+                            $(this).inputSliderRange('setTo', obj[key]);
+                        } else {
+                            $(this).val(obj[key]);
+                        }
+                    }
+                });
+
+                if ($('input').length == successCount) {
+                    draw();
+
+                    alert('クリップボードからコピーしました。');
+                } else {
+                    alert('クリップボードからのコピーに失敗しました。');
+                }
+            });
+        }
+        return false;
+    });
+
     $('.colorpicker').each(function () {
         $(this).minicolors({
             format: $(this).attr('data-format') || 'hex',
@@ -226,7 +279,9 @@ $(document).ready(function () {
         }
     });
 
-    $('#form form input').tooltip({
-        placement: 'bottom'
+    $('#form [title]').tooltip({
+        placement: 'bottom',
+        offset: '0,10',
+        html: true
     });
 });
