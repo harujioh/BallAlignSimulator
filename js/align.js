@@ -253,6 +253,7 @@ $(document).ready(function () {
 
     $('#form [title]').tooltip({
         placement: 'bottom',
+        offset: '0,10',
         html: true
     });
 });
