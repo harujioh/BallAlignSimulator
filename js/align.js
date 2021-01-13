@@ -236,7 +236,11 @@ $(document).ready(function () {
                 $('input').each(function () {
                     var key = $(this).attr('id');
                     if (key in obj) {
-                        $(this).val(obj[key]);
+                        if ($(this).is('.input-slider')) {
+                            $(this).inputSliderRange('setTo', obj[key]);
+                        } else {
+                            $(this).val(obj[key]);
+                        }
                     }
                 });
 
