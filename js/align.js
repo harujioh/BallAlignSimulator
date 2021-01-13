@@ -224,9 +224,12 @@ $(document).ready(function () {
 
     $('#export').click(function () {
         if (navigator.clipboard) {
-            navigator.clipboard.writeText(JSON.stringify(getParameter()));
+            navigator.clipboard.writeText(JSON.stringify(getParameter())).then(() => {
+                alert('クリップボードにコピーしました。');
+            }, err => {
+                alert('Error: ' + err);
+            });
         }
-        alert('クリップボードにコピーしました。');
         return false;
     });
 
@@ -259,6 +262,8 @@ $(document).ready(function () {
                 } else {
                     alert('クリップボードからのコピーに失敗しました。');
                 }
+            }, err => {
+                alert('Error: ' + err);
             });
         }
         return false;
