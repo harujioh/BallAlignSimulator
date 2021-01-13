@@ -226,16 +226,24 @@ $(document).ready(function () {
         if (navigator.clipboard) {
             navigator.clipboard.writeText(JSON.stringify(getParameter()));
         }
+        alert('クリップボードにコピーしました。');
         return false;
     });
 
     $('#import').click(function () {
         if (navigator.clipboard) {
             navigator.clipboard.readText().then(text => {
-                var obj = JSON.parse(text);
+                var obj;
+                try {
+                    obj = JSON.parse(text);
+                } catch (e) {
+                    obj = {};
+                }
+                var successCount = 0;
                 $('input').each(function () {
                     var key = $(this).attr('id');
                     if (key in obj) {
+                        successCount++;
                         if ($(this).is('.input-slider')) {
                             $(this).inputSliderRange('setTo', obj[key]);
                         } else {
@@ -244,8 +252,14 @@ $(document).ready(function () {
                     }
                 });
 
-                draw();
-            })
+                if ($('input').length == successCount) {
+                    draw();
+
+                    alert('クリップボードからコピーしました。');
+                } else {
+                    alert('クリップボードからのコピーに失敗しました。');
+                }
+            });
         }
         return false;
     });
